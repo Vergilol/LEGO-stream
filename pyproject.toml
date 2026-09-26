@@ -1,0 +1,63 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lego-stream"
+version = "0.1.0"
+description = "Local-to-global speaker tracking for streaming speaker-attributed ASR with a speech LLM"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "LEGO-Stream authors" }]
+keywords = [
+  "speaker-attributed-asr",
+  "streaming-asr",
+  "speaker-diarization",
+  "speech-llm",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Multimedia :: Sound/Audio :: Speech",
+]
+
+# The framework itself is deliberately light. The speech LLM is reached over
+# HTTP rather than imported, so neither torch nor vllm is required to install
+# this package; see the extras below and README.md for what each step needs.
+dependencies = [
+  "numpy>=1.22",
+  "scipy>=1.8",
+]
+
+[project.optional-dependencies]
+# Needed to extract speaker embeddings, i.e. for any real run. The speakerlab
+# package itself is not on PyPI: clone https://github.com/modelscope/3D-Speaker
+# and pass --speakerlab-root.
+embedding = [
+  "torch>=2.0",
+  "torchaudio>=2.0",
+]
+# Reading formats that the stdlib wave module cannot handle.
+audio = [
+  "soundfile>=0.12",
+]
+demo = [
+  "fastapi>=0.115",
+  "uvicorn>=0.30",
+  "python-multipart>=0.0.9",
+]
+
+[project.scripts]
+lego-stream = "lego_stream.runtime.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Vergilol/LEGO-stream"
+Repository = "https://github.com/Vergilol/LEGO-stream"
+
+[tool.setuptools.packages.find]
+include = ["lego_stream*"]

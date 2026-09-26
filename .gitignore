@@ -1,0 +1,21 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+demo/
+
+# Run outputs and local model artifacts.
+runs/
+tests/
+outputs/
+docs/
+checkpoints/
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.log

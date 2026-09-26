@@ -1,0 +1,57 @@
+{
+  "endpoint": "http://127.0.0.1:19300/v1",
+  "served_model_name": "moss-transcribe-diarize",
+
+  "sample": {
+    "id": "example",
+    "audio_name": "example",
+    "audio_path": "/absolute/path/to/audio.wav",
+    "duration_sec": 600.0
+  },
+
+  "stream": {
+    "step_sec": 2.0,
+    "context_sec": 60.0,
+    "right_context_sec": 2.0,
+    "heuristic_overlap_min_sec": 0.2,
+    "heuristic_overlap_min_fraction": 0.15,
+    "stitch_mode": "incremental"
+  },
+
+  "inference": {
+    "window_max_new_tokens": 4096,
+    "short_window_max_new_tokens": 512,
+    "short_window_threshold_sec": 9.0,
+    "timeout_sec": 600.0,
+    "sse_soft_deadline_sec": 0.0,
+    "continue_on_decode_error": true,
+    "causal_frontier_request_ids": false
+  },
+
+  "embedding": {
+    "speakerlab_root": "/absolute/path/to/3D-Speaker",
+    "model_dir": "/absolute/path/to/eres2netv2_checkpoint_dir",
+    "checkpoint_name": "pretrained_eres2netv2w24s4ep4.ckpt",
+    "model_name": "eres2netv2",
+    "device": "cuda:0",
+    "batch_size": 64,
+    "chunk_duration_sec": 1.5,
+    "chunk_step_sec": 0.75,
+    "dimension": 192
+  },
+
+  "association": {
+    "mode": "causal_embedding",
+    "policy": "lego",
+    "min_overlap_sec": 0.1,
+    "core_min_duration_sec": 1.5,
+    "core_min_quality": 0.25,
+    "best_effort_after_ticks": 1,
+    "publish_pending_speakers": false,
+
+    "centroid_correction_enabled": false,
+    "centroid_correction_min_gain": 0.05,
+    "centroid_correction_min_cosine": 0.5,
+    "centroid_correction_min_duration_sec": 1.5
+  }
+}
