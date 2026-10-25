@@ -1,0 +1,360 @@
+/* LEGO-Stream demo. Dark, single column, no external fonts. */
+
+:root {
+  --bg: #12141a;
+  --panel: #1b1e26;
+  --panel-2: #14161c;
+  --line: #2c313d;
+  --text: #e8eaf0;
+  --muted: #9aa3b5;
+  --accent: #4db6ac;
+  --accent-ink: #08211f;
+  /* 5.4:1 on the panel, AA for body text. */
+  --pending: #8a93a6;
+  --danger: #e5806f;
+  --warn: #e6be6f;
+  --ok: #7fd8a2;
+}
+
+* { box-sizing: border-box; }
+
+/* The UA's `[hidden]` loses to any author `display` rule, such as `.legend`. */
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.55 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+/* Title and tagline share a line when there is room. */
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 14px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--line);
+}
+h1 { margin: 0; font-size: 17px; font-weight: 600; }
+header p { flex: 1 1 320px; margin: 0; color: var(--muted); font-size: 13px; }
+header strong { color: var(--text); }
+
+main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 1180px;
+  padding: 16px 24px 28px;
+}
+
+/* --- controls ------------------------------------------------------------ */
+
+.controls {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+button:disabled { opacity: .45; cursor: default; }
+button.ghost { background: transparent; color: var(--accent); }
+button.danger { background: transparent; border-color: var(--danger); color: var(--danger); }
+
+/* Input level, then the source. */
+.meter {
+  flex: 0 1 160px;
+  height: 8px;
+  min-width: 90px;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.meter > #level {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--ok), var(--warn) 78%, var(--danger));
+  transition: width .08s linear;
+}
+#note {
+  flex: 1 1 260px;
+  color: var(--muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- progress ------------------------------------------------------------ */
+
+.bar {
+  grid-column: 1 / -1;
+  height: 3px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.bar > #fill {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width .25s ease;
+}
+/* A microphone has no known end, so the bar sweeps instead of filling. */
+.bar.indeterminate > #fill {
+  width: 30%;
+  transition: none;
+  animation: sweep 1.6s ease-in-out infinite;
+}
+@keyframes sweep {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(360%); }
+}
+
+/* --- metric tiles -------------------------------------------------------- */
+
+.tiles {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+.tile {
+  margin: 0;
+  padding: 9px 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.tile dt {
+  margin: 0 0 2px;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.tile dd {
+  margin: 0;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- the transcript ------------------------------------------------------ */
+
+section {
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  min-height: 340px;
+}
+/* Heading, key and legend share a row; the legend wraps once it cannot fit. */
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  margin: 0 0 10px;
+}
+h2 {
+  margin: 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.section-head .key { flex: 0 1 auto; margin: 0; color: var(--muted); font-size: 12px; }
+.section-head .legend { margin-left: auto; }
+
+.scroller {
+  flex: 1 1 auto;
+  /* app.mjs holds the reader's place itself; browser anchoring would correct
+     the same jump twice. */
+  overflow-y: auto;
+  overflow-anchor: none;
+  max-height: 62vh;
+}
+.scroller > #empty { margin: 10px 2px; color: var(--muted); font-size: 13px; }
+.caption {
+  margin: 0;
+  padding: 2px 2px 4px;
+  color: var(--pending);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* The line between "may still change" and "never changes". */
+#provisional:not(:empty) { border-bottom: 1px dashed var(--line); margin-bottom: 4px; }
+
+li.row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 7px 2px 7px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, .05);
+  border-left: 3px solid transparent;
+  font-size: 14px;
+}
+/* Under the playhead: a tint and an edge, not colour alone. */
+li.row.is-active {
+  background: rgba(77, 182, 172, .12);
+  border-left-color: var(--accent);
+}
+li.row .spk {
+  flex: 0 0 auto;
+  min-width: 40px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+li.row .t {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+li.row .txt { flex: 1 1 auto; white-space: pre-wrap; word-break: break-word; }
+
+/* Provisional: grey and italic, one indented track per voice. No speaker
+   colour, since nothing is labelled yet. */
+li.row.provisional { color: var(--pending); }
+li.row.provisional .txt { font-style: italic; }
+li.row.provisional .spk { color: var(--pending); font-weight: 400; }
+li.row.provisional[data-lane="1"] { margin-left: 1.5em; border-left: 1px dashed var(--line); }
+li.row.provisional[data-lane="2"] { margin-left: 3em; border-left: 1px dashed var(--line); }
+li.row.provisional[data-lane="3"] { margin-left: 4.5em; border-left: 1px dashed var(--line); }
+li.row.provisional.is-active { border-left: 3px solid var(--pending); }
+/* New rows fade in, unless reduced motion is requested. */
+li.row.is-new { animation: row-in .3s ease both; }
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  li.row.is-new { animation: none; }
+  .bar.indeterminate > #fill { animation: none; width: 100%; opacity: .5; }
+}
+
+/* --- legend -------------------------------------------------------------- */
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  color: var(--muted);
+}
+.legend li { display: flex; align-items: center; gap: 5px; }
+.legend .swatch {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex: 0 0 auto;
+}
+.legend .n { font-variant-numeric: tabular-nums; opacity: .7; }
+
+/* --- playback ------------------------------------------------------------ */
+
+.player {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: center;
+  padding: 8px 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.player audio { flex: 1 1 320px; min-width: 240px; height: 34px; }
+#player-note { flex: 1 1 220px; }
+
+/* --- drag and drop ------------------------------------------------------- */
+
+.drop {
+  position: fixed;
+  inset: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--accent);
+  border-radius: 12px;
+  background: rgba(18, 20, 26, .86);
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 600;
+  /* Drag events go to the window, not the overlay. */
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* --- footer -------------------------------------------------------------- */
+
+footer {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+#status {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 12px;
+  min-height: 1.4em;
+  white-space: pre-wrap;
+}
+#status.err { color: var(--danger); }
+#status.warn { color: var(--warn); }
+#status.ok { color: var(--ok); }
+
+#output {
+  grid-column: 1 / -1;
+  color: var(--muted);
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  word-break: break-all;
+  min-height: 1.3em;
+}
+
+/* The append-only check; empty while it holds. */
+#contract {
+  flex: 1 1 260px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+#contract.ok { color: var(--ok); }
+#contract.bad { color: var(--danger); font-weight: 600; }
+
+/* The check against the artifact on disk; "not checked" stays muted. */
+#check { flex: 1 1 220px; font-size: 12px; color: var(--muted); }
+#check.ok { color: var(--ok); }
+#check.bad { color: var(--danger); font-weight: 600; }

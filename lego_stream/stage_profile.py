@@ -24,7 +24,7 @@ _STAGE_FIELDS = (
 
 
 def _without_sec_suffix(field: str) -> str:
-    """Keep the profiler compatible with the project's Python 3.8 runtime."""
+    """``field`` without its ``_sec`` suffix."""
 
     return field[:-4] if field.endswith("_sec") else field
 

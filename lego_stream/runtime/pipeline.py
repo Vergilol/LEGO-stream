@@ -253,7 +253,7 @@ class SpeakerBindingRuntime:
 
 
 class _MultiPolicySpeakerAssigner:
-    """Compatibility engine for canonical and sealed historical policies."""
+    """Speaker assigner for the lego policy and the two ablation policies."""
 
     def __init__(
         self,
@@ -445,7 +445,7 @@ class _MultiPolicySpeakerAssigner:
         }
         if self._centroid_override:
             # Only emitted once a correction actually fired, so a run with the
-            # layer disabled keeps producing the historical digest byte for byte.
+            # layer disabled produces the same digest as a build without it.
             snapshot["centroid_override"] = [
                 [key, value]
                 for key, value in sorted(self._centroid_override.items())
@@ -1954,10 +1954,9 @@ PostCommitSpeakerAssigner = _MultiPolicySpeakerAssigner
 class CausalSpeakerBinder(_MultiPolicySpeakerAssigner):
     """Canonical causal E-to-G binder.
 
-    The historical ``PostCommitSpeakerAssigner`` name remains available only
-    so sealed experiments can be reproduced with their explicit policy.  New
-    callers get the authoritative lego policy even when they construct
-    the binder directly rather than going through ``build_speaker_binder``.
+    ``PostCommitSpeakerAssigner`` names the same engine.  Constructed
+    directly rather than via ``build_speaker_binder``, this class still
+    defaults to the lego policy.
     """
 
     def __init__(
@@ -1980,9 +1979,7 @@ def build_speaker_binder(
 ) -> Optional[CausalSpeakerBinder]:
     """Build the canonical speaker binder used by batch and online paths.
 
-    Legacy policies remain readable for old sealed configs, but a missing
-    policy now means the canonical lego policy rather than silently
-    selecting an older empirical resolver.
+    ``association.policy`` selects the policy; when absent, it is lego.
     """
 
     if embedding_store is None:
@@ -2438,8 +2435,7 @@ def validate_config(
         raise ValueError("dynamic schedule_path is not implemented; use the fixed-step stream contract")
     if require_embedding:
         embedding = _mapping(normalized, "embedding")
-        # ``repo_root`` is the historical name for the same value and is still
-        # accepted, so a config written against an earlier revision keeps working.
+        # ``repo_root`` is accepted as an alias.
         speakerlab_root = str(
             embedding.get("speakerlab_root") or embedding.get("repo_root") or ""
         ).strip()
@@ -2595,9 +2591,8 @@ def validate_config(
                 "association.core_max_overlap_fraction is removed; clean-core "
                 "extraction always requires zero overlap"
             )
-        # Keys belonging to a retired resolver variant. Reject rather than
-        # ignore: a carried-over config would otherwise run as a plain
-        # single-resolver stream while still looking like that variant on disk.
+        # Resolver variants this release does not include. Reject rather than
+        # ignore, so a config naming one does not silently run without it.
         for retired_key in ("identity_shadow_twin", "hierarchical_posterior_freeze"):
             if association.get(retired_key) not in (None, "", False):
                 raise ValueError(

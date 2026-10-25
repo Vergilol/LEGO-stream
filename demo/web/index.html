@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LEGO-Stream — streaming speaker-attributed transcription</title>
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+
+<header>
+  <h1>LEGO-Stream</h1>
+  <p>
+    Streaming speaker-attributed ASR. <strong>L</strong>ocal labels stay in
+    their window, <strong>E</strong>vidence is frozen per turn,
+    <strong>G</strong>lobal speakers grow, <strong>O</strong>utput is never
+    revised.
+  </p>
+</header>
+
+<main id="main">
+  <div class="controls">
+    <input id="file" type="file" accept="audio/*" hidden />
+    <button id="pick" title="Play an audio file here and stream it as it plays; you can also drop one anywhere on the page">Upload audio…</button>
+    <button id="mic" class="ghost">Microphone</button>
+    <button id="resume" hidden>Play</button>
+    <button id="stop" class="danger" hidden>Stop</button>
+    <div class="meter" aria-hidden="true"><div id="level"></div></div>
+    <span id="note"></span>
+  </div>
+
+  <div class="bar" id="progress"><div id="fill"></div></div>
+
+  <div class="tiles">
+    <dl class="tile"><dt title="Audio streamed so far, on the same clock as the row times">Time</dt><dd id="m-time">—</dd></dl>
+    <dl class="tile"><dt title="Compute time per second of audio; below 1 means faster than real time">RTF</dt><dd id="m-rtf">—</dd></dl>
+    <dl class="tile"><dt title="Median, over the published turns, of how much audio went by between a turn ending and its being published for good">Commit delay</dt><dd id="m-delay">—</dd></dl>
+    <dl class="tile"><dt title="Speakers in the published rows so far">Speakers</dt><dd id="m-speakers">—</dd></dl>
+  </div>
+
+  <div id="playback" class="player" hidden>
+    <audio id="player" controls preload="metadata"></audio>
+    <span id="player-note"></span>
+  </div>
+
+  <section aria-labelledby="transcript-title">
+    <div class="section-head">
+      <h2 id="transcript-title">Transcript</h2>
+      <p class="key">
+        Latest first. Grey: still decoding, one track per voice, no speaker yet.
+        Solid: final, never revised; <span id="count">0</span> so far.
+      </p>
+      <ul id="legend" class="legend" hidden></ul>
+    </div>
+    <div id="scroller" class="scroller">
+      <p id="provisional-caption" class="caption" hidden>Decoding</p>
+      <ol id="provisional" class="rows" aria-label="Still decoding"></ol>
+      <ol id="published" class="rows" role="log" aria-live="polite" aria-relevant="additions" aria-label="Published transcript, latest first"></ol>
+      <p id="empty">Nothing yet: the first rows appear a few seconds in.</p>
+    </div>
+  </section>
+
+  <footer>
+    <button id="srt" class="ghost" disabled>Download SRT</button>
+    <button id="json" class="ghost" disabled>Download JSON</button>
+    <span id="contract"></span>
+    <span id="check"></span>
+  </footer>
+
+  <div id="status" role="status"></div>
+  <div id="output"></div>
+</main>
+
+<div id="drop" class="drop" hidden aria-hidden="true">Drop an audio file to play and transcribe it</div>
+
+<script type="module" src="/assets/app.mjs"></script>
+</body>
+</html>

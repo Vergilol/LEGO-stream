@@ -1,1 +1,1 @@
-"""Implementation/compatibility surface for canonical causal speaker binding."""
+"""Runtime for canonical causal speaker binding."""

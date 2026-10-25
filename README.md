@@ -3,6 +3,13 @@
 Reference implementation of **LEGO-Stream: Local-to-Global Speaker Tracking for
 Streaming Speaker-Attributed ASR with a Speech LLM**.
 
+<p align="center">
+  <a href="assets/demo.mp4"><img src="assets/demo.gif" width="100%" alt="The live demo transcribing a meeting as it plays: grey rows are still decoding, solid rows are final and keep their speaker label, newest on top"></a>
+</p>
+
+<sub>Our [demo](#demo), live on a meeting recording; click for the video with
+sound.</sub>
+
 A speech LLM marks who speaks only relative to the window it just decoded, and
 never separates a hypothesis it may still revise from a label it has already
 shown. LEGO-Stream keeps speaker identity outside the backbone, so nothing caps
@@ -149,7 +156,14 @@ already. Transcript lines are printed and written to `<out>/hypothesis.json`.
 
 ## Demo
 
-TODO
+```bash
+pip install -e '.[demo,embedding]'
+python -m demo.server --speaker-model <dir> --speakerlab-root <dir>
+```
+
+Start the speech LLM first, then open <http://127.0.0.1:7860> and upload an
+audio file or use the microphone; a file is transcribed as it plays. Grey rows
+are still decoding; solid rows are final.
 
 ## Evaluation
 

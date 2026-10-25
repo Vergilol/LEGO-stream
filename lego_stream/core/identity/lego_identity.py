@@ -277,8 +277,8 @@ class LegoIdentityConfig:
     # argues neither for nor against the same speaker.
     background_location: float = 0.45
     background_scale: float = 0.12
-    # Discount on the carry-over term.  0.75 is the value Table 1 was produced
-    # at; the released default stays on that published operating point.
+    # Discount on the carry-over term.  0.75 is the operating point of the
+    # paper's main results.
     context_scale: float = 0.75
     unexplained_complexity_cost: float = 0.35
     # How many independent lineages a bank retains.  One quantity: the bridge and
@@ -592,7 +592,7 @@ class GlobalIdentityState:
     provisional_output_label: Optional[str] = None
 
 
-# Read-only alias for older imports; the resolver owns E via GlobalIdentityState.
+# Alias; the resolver owns E via GlobalIdentityState.
 AcousticComponentState = EmbeddingComponentState
 
 

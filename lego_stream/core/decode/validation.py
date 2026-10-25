@@ -226,8 +226,8 @@ def validate_trace_rows(
         if row.get("gate_status") not in (None, "passed"):
             raise ValidationError(f"trace tick {row.get('tick')} failed ASR gate")
         if "delta_segments" not in row:
-            # Unlike new engine rows, an older trace may carry no delta field at
-            # all; skip it rather than fail the replay guard.
+            # A row without a delta field has nothing to check; skip it rather
+            # than fail the replay guard.
             continue
         raw_delta = row.get("delta_segments")
         if not isinstance(raw_delta, Sequence) or isinstance(raw_delta, (str, bytes)):

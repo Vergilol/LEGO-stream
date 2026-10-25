@@ -467,8 +467,8 @@ class SpeakerRegistry:
     ) -> List[SpeakerDecision]:
         """Resolve one snapshot with a one-track-per-local-speaker assignment.
 
-        The old implementation was order-dependent: an ambiguous first local
-        speaker could greedily consume a track that a later, high-confidence
+        A greedy pass would be order-dependent: an ambiguous first local
+        speaker could consume a track that a later, high-confidence
         observation clearly needed. We solve one polynomial maximum-weight
         bipartite assignment for every speaker count and return decisions in
         the same order as the input iterable.

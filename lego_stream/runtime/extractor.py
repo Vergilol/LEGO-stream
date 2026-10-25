@@ -324,7 +324,7 @@ def _mean_mono(waveform: Any) -> Any:
         raise RuntimeError("audio loader returned an empty waveform")
     if int(waveform.shape[0]) <= 1:
         return waveform
-    # Unit fixtures hand this a numpy array rather than a tensor.
+    # Accepts a numpy array as well as a tensor.
     if isinstance(waveform, np.ndarray):
         return waveform.mean(axis=0, keepdims=True)
     return waveform.mean(dim=0, keepdim=True)
@@ -361,7 +361,7 @@ def _as_processor_waveform(waveform: np.ndarray) -> Any:
 
         waveform = torch.from_numpy(np.ascontiguousarray(waveform, dtype=np.float32))
     except (ImportError, AttributeError):
-        # A numpy-only fake torch module: the unit fixtures supply one.
+        # No usable torch: keep the numpy array.
         pass
     return waveform
 

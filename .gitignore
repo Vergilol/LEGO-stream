@@ -6,7 +6,6 @@ __pycache__/
 .ruff_cache/
 build/
 dist/
-demo/
 
 # Run outputs and local model artifacts.
 runs/
